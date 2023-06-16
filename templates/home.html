@@ -24,6 +24,25 @@
           </button>
         </div>
       </form>
+
+      <div class="todo-container w-6/12 mx-auto mt-28">
+        {% for todo in todos %}
+        <div
+          class="todo-item border-solid border-2 border-black rounded flex items-center gap-x-3 py-2 px-1 my-1"
+        >
+          <input type="checkbox" name="completed" />
+
+          <span class="grow"> {{ todo[1] }} </span>
+
+          <img
+            class="w-6"
+            src="{{ url_for('static', filename='img/trash-icon.svg') }}"
+            alt=""
+          />
+        </div>
+
+        {% endfor %}
+      </div>
     </div>
   </body>
 </html>
