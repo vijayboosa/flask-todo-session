@@ -61,6 +61,31 @@ def home():
 
 
 # /delete-todo -> delete todo page
+@app.route("/delete-todo/<int:todo_id>", methods=['POST'])
+def delete_todo(todo_id):
+    # connect to the database
+    conn = sqlite3.connect("test.db")
+    
+    # create a cursor
+    cursor = conn.cursor()
+    
+    query = """
+        DELETE FROM TODO WHERE id = :todo_id
+    """
+    
+    cursor.execute(query, {"todo_id": todo_id})
+    
+    # save changes
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
+
+
+@app.route("/todo-completed/<int:todo_id>", methods=['POST'])
+def todo_completed(todo_id):
+    print(request.form)
+    return redirect("/")
 
 
 # /update-todo -> update todo page

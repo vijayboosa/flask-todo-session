@@ -27,22 +27,46 @@
 
       <div class="todo-container w-6/12 mx-auto mt-28">
         {% for todo in todos %}
+        <!-- todo -> (todoId, title, completed, date_created) -->
         <div
-          class="todo-item border-solid border-2 border-black rounded flex items-center gap-x-3 py-2 px-1 my-1"
+          class="todo-item border-solid border-2 border-black rounded flex items-center gap-x-3 py-2 px-1 my-1 hover:border-green-300"
         >
-          <input type="checkbox" name="completed" />
+          {% if todo[2] %}
+          <input type="checkbox" name="completed" data-todo-id="{{todo[0]}}" checked />
+          {% else %}
+          <input type="checkbox" name="completed" data-todo-id="{{todo[0]}}"/>
+          {% endif %}
 
-          <span class="grow"> {{ todo[1] }} </span>
+          <span class="grow line-through"> {{ todo[1] }} </span>
 
-          <img
-            class="w-6"
-            src="{{ url_for('static', filename='img/trash-icon.svg') }}"
-            alt=""
-          />
+          <form action="/delete-todo/{{ todo[0] }}" method="post">
+            <button type="submit">
+              <img
+                class="w-6 cursor-pointer"
+                src="{{ url_for('static', filename='img/trash-icon.svg') }}"
+                alt=""
+              />
+            </button>
+          </form>
         </div>
 
         {% endfor %}
       </div>
     </div>
+
+    <script>
+      // select a element to listen for click events
+      const allCheckBox = document.querySelectorAll("input[type=checkbox]");
+      // [2,1,4]
+      // loop through the elements and add a eventListener on each checkbox
+      allCheckBox.forEach((value) => {
+        value.addEventListener("change", (event) => {
+          console.log(event.currentTarget.getAttribute("data-todo-id"));
+          console.log(event.currentTarget.checked);
+          // use js to make request to the server (this request doesn't reload the page)
+          
+        });
+      });
+    </script>
   </body>
 </html>
