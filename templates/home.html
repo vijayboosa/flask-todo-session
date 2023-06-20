@@ -32,9 +32,14 @@
           class="todo-item border-solid border-2 border-black rounded flex items-center gap-x-3 py-2 px-1 my-1 hover:border-green-300"
         >
           {% if todo[2] %}
-          <input type="checkbox" name="completed" data-todo-id="{{todo[0]}}" checked />
+          <input
+            type="checkbox"
+            name="completed"
+            data-todo-id="{{todo[0]}}"
+            checked
+          />
           {% else %}
-          <input type="checkbox" name="completed" data-todo-id="{{todo[0]}}"/>
+          <input type="checkbox" name="completed" data-todo-id="{{todo[0]}}" />
           {% endif %}
 
           <span class="grow line-through"> {{ todo[1] }} </span>
@@ -64,7 +69,39 @@
           console.log(event.currentTarget.getAttribute("data-todo-id"));
           console.log(event.currentTarget.checked);
           // use js to make request to the server (this request doesn't reload the page)
-          
+          const todoId = event.currentTarget.getAttribute("data-todo-id");
+
+          const url = `http://${window.location.host}/todo-completed/${todoId}`;
+
+          /*
+          import requests
+
+          url = ""
+
+          resp = requests.get(url)
+
+          print(resp)
+
+          */
+
+          /*
+            const url = ""
+
+            fetch(url)
+
+          */
+          console.log("making a request");
+          const  a = fetch(url)
+            .then((e) => {
+              console.log("request completed");
+              return e.json();
+            })
+            .then((e) => {
+              console.log("json response", e);
+            });
+
+          console.log("hello this is after fetch");
+          console.log(a);
         });
       });
     </script>

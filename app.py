@@ -82,10 +82,9 @@ def delete_todo(todo_id):
     return redirect("/")
 
 
-@app.route("/todo-completed/<int:todo_id>", methods=['POST'])
+@app.route("/todo-completed/<int:todo_id>")
 def todo_completed(todo_id):
-    print(request.form)
-    return redirect("/")
+    return {"message": "todo completed"}
 
 
 # /update-todo -> update todo page
