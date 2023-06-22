@@ -40,10 +40,13 @@
           />
           {% else %}
           <input type="checkbox" name="completed" data-todo-id="{{todo[0]}}" />
+          {% endif %} 
+          
+          {% if todo[2] %}
+            <span class="grow line-through"> {{ todo[1] }} </span>
+            {% else %}
+            <span class="grow"> {{ todo[1] }} </span>
           {% endif %}
-
-          <span class="grow line-through"> {{ todo[1] }} </span>
-
           <form action="/delete-todo/{{ todo[0] }}" method="post">
             <button type="submit">
               <img
@@ -66,32 +69,20 @@
       // loop through the elements and add a eventListener on each checkbox
       allCheckBox.forEach((value) => {
         value.addEventListener("change", (event) => {
-          console.log(event.currentTarget.getAttribute("data-todo-id"));
-          console.log(event.currentTarget.checked);
+          const target = event.currentTarget;
+
           // use js to make request to the server (this request doesn't reload the page)
-          const todoId = event.currentTarget.getAttribute("data-todo-id");
+          const todoId = target.getAttribute("data-todo-id");
 
           const url = `http://${window.location.host}/todo-completed/${todoId}`;
 
-          /*
-          import requests
+          if (target.checked) {
+            target.nextElementSibling.classList.add("line-through");
+          } else {
+            target.nextElementSibling.classList.remove("line-through");
+          }
 
-          url = ""
-
-          resp = requests.get(url)
-
-          print(resp)
-
-          */
-
-          /*
-            const url = ""
-
-            fetch(url)
-
-          */
-          console.log("making a request");
-          const  a = fetch(url)
+          const a = fetch(url)
             .then((e) => {
               console.log("request completed");
               return e.json();

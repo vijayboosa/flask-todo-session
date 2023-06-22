@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
 from datetime import datetime
+import re
 
 
 app = Flask(__name__)
@@ -84,6 +85,27 @@ def delete_todo(todo_id):
 
 @app.route("/todo-completed/<int:todo_id>")
 def todo_completed(todo_id):
+
+    # connect to db
+    conn = sqlite3.connect("test.db")
+    cursor = conn.cursor()
+    
+    # write a query to update the todo column completed to True or False where id = todo_id
+    query = """
+        UPDATE TODO SET completed = 
+        CASE WHEN completed = 1 THEN 
+            0
+        ELSE 
+            1
+        END
+        WHERE id = :todo_id;
+    """
+    
+    cursor.execute(query, { "todo_id": todo_id})
+    
+    # save changes
+    conn.commit()
+    
     return {"message": "todo completed"}
 
 
