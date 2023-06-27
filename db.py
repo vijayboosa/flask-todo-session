@@ -20,18 +20,20 @@ cursor.execute("""
 """)
 
 
-
-# insert data to db
-fake_data = {"title": "Learn Python", "completed": False, "date_created": "2023-06-15"}
-
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS USER (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username varchar(40),
+        password text
+        );
+""")
 
 query = """
-    INSERT INTO TODO (title, completed, date_created)
-    VALUES (:title, :completed, :date_created)
+    INSERT INTO USER (username, password)
+    VALUES (:username, :password)
 """
 
-cursor.execute(query, fake_data)
+cursor.execute(query, {"username": "admin", "password": "admin"})
 
-
-conn.commit() # commit -> save changes
-conn.close() # close -> close connection to db
+conn.commit()
+conn.close()

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <style>
+      .main {
+        text-align: center;
+      }
+
+      input {
+        font-size: 2rem;
+        margin: 1rem;
+      }
+
+
+      /* label {
+        margin: 1rem;
+      } */
+
+
+    </style>
+  </head>
+  <body>
+    <div class="main">
+        <!-- http://127.0.0.1:5000/login -->
+      <form method="post" >
+        <div class="username-input">
+            <label for="username">Username</label>
+            <br>
+            <input type="text" name="username" id="username"/>
+        </div>
+        <div class="pwd-input">
+            <label for="password">password</label>
+            <br>
+            <input type="password" name="password" id="password"/>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </body>
+</html>
