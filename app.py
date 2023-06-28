@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect,make_response
 import sqlite3
 from datetime import datetime
 import re
@@ -6,6 +6,35 @@ import re
 
 app = Flask(__name__)
 
+def generate_session_token():
+    from random import choices
+    import string
+    
+    key = ''.join(choices(string.ascii_letters + string.digits, k=50))
+    
+    return key
+
+
+def get_token_from_request():
+    return request.cookies.get("token", default=None)
+
+def verify_token(token):
+    conn = sqlite3.connect("test.db")
+    
+    cursor = conn.cursor()
+    
+    query = """
+        SELECT user_id FROM SESSIONS WHERE key = :key
+        """
+
+    cursor.execute(query, {"key": token})
+    
+    result = cursor.fetchone()
+    
+    result = result[0] if result else None
+    
+    return result
+    
 
 # / -> home page a
 @app.route("/", methods=['GET', 'POST'])
@@ -120,14 +149,30 @@ def todo_completed(todo_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    
+    token = get_token_from_request()
+        
+    if token:
+        # check in the database if the token is valid
+        result = verify_token(token)
+        if result:
+            return redirect("/")
+
+    
     if request.method == "POST":
+        
+        response_home = make_response(redirect("/"))
+        response_login = make_response(redirect("/login"))
+        
+        response_login.delete_cookie("token")
+
         # get the username and password from the form
         username = request.form.get("username", default="").strip()
         pwd = request.form.get("password", default="").strip()
         
         # if username or password is empty -> redirect to login page
         if len(username) <= 0 or len(pwd) <= 0:
-            return redirect("/login")
+            return response_login
         
         # check if the username and password are valid with 
         # the database
@@ -135,29 +180,36 @@ def login():
         
         cursor = conn.cursor()
         
-        query = "select * from USER where username = :username and password = :password"
+        query = "select id from USER where username = :username and password = :password"
         # username -> abhi
         # pwd -> abhi
         cursor.execute(query, {"username": username, "password": pwd})
         
         result = cursor.fetchone() 
-        # result -> (1, "abhi", "abhi") if user exists
+        # result -> (1,) if user exists
         # result -> None -> if user does not exist
 
         if result:
-            #TODO create a token
+            token = generate_session_token()
             
-            #TODO set the token in cookie
+            # set the cookie in the sessions table
+            query = """
+                INSERT INTO SESSIONS (key, user_id) 
+                VALUES (:key, :user_id)
+            """
+            cursor.execute(query, {"key": token, "user_id": result[0]})
+            conn.commit()
             
-            #TODO redirect to home page
+
+            response_home.set_cookie("token", token)
             
-            return redirect("/")
+            return response_home
         
         return redirect("/login")
-        
-        # if not valid -> redirect to login page
-        
-    return render_template("login.html")
+    
+    response = make_response(render_template("login.html"))
+    response.delete_cookie("token")     
+    return response
 
 
 

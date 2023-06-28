@@ -28,12 +28,11 @@ cursor.execute("""
         );
 """)
 
-query = """
-    INSERT INTO USER (username, password)
-    VALUES (:username, :password)
-"""
-
-cursor.execute(query, {"username": "admin", "password": "admin"})
-
-conn.commit()
-conn.close()
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS SESSIONS (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        key text,
+        user_id integer,
+        FOREIGN KEY(user_id) REFERENCES USER(id) ON DELETE CASCADE
+        );
+""")
