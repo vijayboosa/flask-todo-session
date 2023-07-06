@@ -58,6 +58,14 @@ def login_required(fun):
     return wrapper
 
 
+@app.route("/logout")
+def logout():
+    response = make_response(redirect("/login"))
+    response.delete_cookie("token")
+
+    return response
+
+
 # / -> home page a
 @app.route("/", methods=["GET", "POST"])
 @login_required
