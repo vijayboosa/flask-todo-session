@@ -87,6 +87,8 @@ def home():
 
         return render_template("home.html", todos=todos)
 
+    
+    
     # handle post request
     form_data = request.form
     title = form_data.get("title", default="").strip()
@@ -99,14 +101,22 @@ def home():
 
     # create a cursor
     cursor = conn.cursor()
+    
+    token = request.cookies.get("token")
+
+    user_id_query = "SELECT user_id from SESSIONS WHERE key = :key"
+
+    cursor.execute(user_id_query, {"key": token})
+    
+    user_id = cursor.fetchone()[0] # (3,)
 
     query = """
-        INSERT INTO TODO (title, completed, date_created)
-        VALUES (:title, :completed, :date_created)
+        INSERT INTO TODO (title, completed, date_created, user_id)
+        VALUES (:title, :completed, :date_created, :user_id)
     """
 
     cursor.execute(
-        query, {"title": title, "completed": False, "date_created": datetime.now()}
+        query, {"title": title, "completed": False, "date_created": datetime.now(), ,"user_id": user_id}
     )
 
     print("Data saved to db")
