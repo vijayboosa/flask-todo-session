@@ -239,4 +239,21 @@ def login():
     return response
 
 
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "GET":
+        msg = request.args.get("msg")
+        return render_template("signup.html", context=msg)
+
+    form_data = request.form
+    username = form_data.get("username")
+    password = form_data.get("password")
+    confirm_password = form_data.get("confirm-password")
+
+    if password != confirm_password:
+        return redirect("/signup?msg=password doesn't match")
+
+    return redirect("/signup")
+
+
 app.run(debug=True)

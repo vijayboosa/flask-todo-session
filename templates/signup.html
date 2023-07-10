@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign UP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="container text-center w-[50%] m-auto">
+      <form method="post" class="flex flex-col text-left">
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="username"
+          >
+            Username
+          </label>
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="username"
+            type="text"
+            placeholder="Username"
+            required
+            name="username"
+          />
+        </div>
+        {% set color = ''%}
+        {% if context %}
+            {% set color = 'border-rose-500' %}
+        {% endif %}
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="username"
+          >
+            Password
+          </label>
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline {{ color }}"
+            id="username"
+            type="password"
+            placeholder="Password"
+            name="password"
+            required
+          />
+          {% if context %}
+            <span class="text-red-600">{{context}}</span>
+        {% endif %}
+        </div>
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="username"
+            >
+            Confirm Password
+        </label>
+        <input
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline {{ color }}"
+        id="username"
+        type="password"
+        placeholder="Confirm Password"
+        name="confirm-password"
+        required
+          />
+        </div>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            Sign In
+          </button>
+      </form>
+    </div>
+  </body>
+</html>
