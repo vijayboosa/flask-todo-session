@@ -87,8 +87,6 @@ def home():
 
         return render_template("home.html", todos=todos)
 
-    
-    
     # handle post request
     form_data = request.form
     title = form_data.get("title", default="").strip()
@@ -101,14 +99,14 @@ def home():
 
     # create a cursor
     cursor = conn.cursor()
-    
+
     token = request.cookies.get("token")
 
     user_id_query = "SELECT user_id from SESSIONS WHERE key = :key"
 
     cursor.execute(user_id_query, {"key": token})
-    
-    user_id = cursor.fetchone()[0] # (3,)
+
+    user_id = cursor.fetchone()[0]  # (3,)
 
     query = """
         INSERT INTO TODO (title, completed, date_created, user_id)
@@ -116,7 +114,13 @@ def home():
     """
 
     cursor.execute(
-        query, {"title": title, "completed": False, "date_created": datetime.now(), ,"user_id": user_id}
+        query,
+        {
+            "title": title,
+            "completed": False,
+            "date_created": datetime.now(),
+            "user_id": user_id,
+        },
     )
 
     print("Data saved to db")
@@ -243,7 +247,11 @@ def login():
 def signup():
     if request.method == "GET":
         msg = request.args.get("msg")
-        return render_template("signup.html", context=msg)
+        username = request.args.get("username")
+        error = request.args.get("error")
+        return render_template(
+            "signup.html", context={"msg": msg, "name": username, "err": error}
+        )
 
     form_data = request.form
     username = form_data.get("username")
@@ -251,9 +259,32 @@ def signup():
     confirm_password = form_data.get("confirm-password")
 
     if password != confirm_password:
-        return redirect("/signup?msg=password doesn't match")
+        return redirect(
+            f"/signup?msg=password doesn't match&username={username}&error=pwd"
+        )
 
-    return redirect("/signup")
+    # check if the username already exists in the database
+    conn = sqlite3.connect("test.db")
+
+    cursor = conn.cursor()
+
+    query = """
+        SELECT id FROM USER WHERE username = :username
+    """
+    cursor.execute(query, {"username": username.strip()})
+    result = cursor.fetchone()
+    if result:
+        return redirect(
+            f"/signup?msg=username already exists&username={username}&error=username"
+        )
+
+    # insert the username and password in the database
+    query = " INSERT INTO USER (username, password) VALUES (:username, :password)"
+    cursor.execute(query, {"username": username, "password": password})
+
+    conn.commit()
+
+    return redirect("/login")
 
 
-app.run(debug=True)
+app.run(debug=True, port=8080)

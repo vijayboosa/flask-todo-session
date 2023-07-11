@@ -7,7 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
-    <div class="container text-center w-[50%] m-auto">
+    {% set color = ''%} {% set name_color = ''%} {% if context['msg'] %} {% if
+    context['err'] == 'pwd' %} {% set color ='border-rose-500' %} {% elif
+    context['err'] == 'username' %} {% set name_color = 'border-rose-500' %} {%
+    endif %} {% endif %}
+    <div class="container text-center w-[50%] m-auto mt-[10%]">
       <form method="post" class="flex flex-col text-left">
         <div class="mb-4">
           <label
@@ -16,19 +20,15 @@
           >
             Username
           </label>
-          <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="username"
-            type="text"
-            placeholder="Username"
-            required
-            name="username"
-          />
+          <input class="shadow appearance-none border rounded w-full py-2 px-3
+          text-gray-700 leading-tight focus:outline-none focus:shadow-outline
+          {{name_color}}" id="username" type="text" placeholder="Username" {% if
+          context['name'] %} value="{{context['name']}}" {% endif %} required
+          name="username" /> {% if context['msg'] and context['err'] ==
+          'username' %}
+          <span class="text-red-600">{{context['msg']}}</span>
+          {% endif %}
         </div>
-        {% set color = ''%}
-        {% if context %}
-            {% set color = 'border-rose-500' %}
-        {% endif %}
         <div class="mb-4">
           <label
             class="block text-gray-700 text-sm font-bold mb-2"
@@ -44,30 +44,43 @@
             name="password"
             required
           />
-          {% if context %}
-            <span class="text-red-600">{{context}}</span>
-        {% endif %}
+          {% if context['msg'] and context['err'] == 'pwd' %}
+          <span class="text-red-600">{{context['msg']}}</span>
+          {% endif %}
         </div>
         <div class="mb-4">
           <label
             class="block text-gray-700 text-sm font-bold mb-2"
             for="username"
-            >
+          >
             Confirm Password
-        </label>
-        <input
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline {{ color }}"
-        id="username"
-        type="password"
-        placeholder="Confirm Password"
-        name="confirm-password"
-        required
+          </label>
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline {{ color }}"
+            id="username"
+            type="password"
+            placeholder="Confirm Password"
+            name="confirm-password"
+            required
           />
         </div>
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-            Sign In
-          </button>
+        <div class="flex items-start my-6">
+          <span>Already have an Account? </span> 
+          <a href="/login">
+            <span class="underline hover:cursor-pointer font-bold hover:text-sky-400 ml-1">
+              Login
+            </span> 
+          </a>
+        </div>
+
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Sign In
+        </button>
       </form>
+        
     </div>
   </body>
 </html>
